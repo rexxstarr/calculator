@@ -1,36 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Calculator</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Slick Calculator</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #1e1e2f, #27293d);
+      font-family: 'Orbitron', sans-serif;
+      color: #fff;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .calculator {
+      background: #2d2f4a;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      width: 300px;
+    }
+
+    .display {
+      background: #1a1c2c;
+      color: #00ffcc;
+      padding: 20px;
+      font-size: 2em;
+      text-align: right;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      word-wrap: break-word;
+      min-height: 60px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+
+    .btn {
+      padding: 20px;
+      background: #383b57;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.2em;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.15s ease-in-out;
+    }
+
+    .btn:hover {
+      background: #4e5170;
+      transform: scale(1.05);
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+      background: #5f6285;
+    }
+
+    .btn.operator {
+      background: #ff5e5e;
+    }
+
+    .btn.operator:hover {
+      background: #ff7878;
+    }
+
+    .btn.equal {
+      background: #00d09c;
+      grid-column: span 2;
+    }
+
+    .btn.equal:hover {
+      background: #00eab0;
+    }
+
+    .btn.clear {
+      background: #ffaa2b;
+    }
+
+    .btn.clear:hover {
+      background: #ffc369;
+    }
+  </style>
 </head>
 <body>
-    <div class="calculator-grid">
-        <div class="output">
-            <div data-previous-operand class="previous-operand"></div>
-            <div data-current-operand class="current-operand">0</div>
-        </div>
-        <button data-all-clear class="span-two">AC</button>
-        <button data-delete>DEL</button>
-        <button data-operator>÷</button>
-        <button data-number>1</button>
-        <button data-number>2</button>
-        <button data-number>3</button>
-        <button data-operator>*</button>
-        <button data-number>4</button>
-        <button data-number>5</button>
-        <button data-number>6</button>
-        <button data-operator>+</button>
-        <button data-number>7</button>
-        <button data-number>8</button>
-        <button data-number>9</button>
-        <button data-operator>-</button>
-        <button data-number>.</button>
-        <button data-number>0</button>
-        <button data-equals class="span-two">=</button>
+  <div class="calculator">
+    <div id="display" class="display">0</div>
+    <div class="buttons">
+      <button class="btn clear" onclick="clearDisplay()">C</button>
+      <button class="btn" onclick="appendToDisplay('(')">(</button>
+      <button class="btn" onclick="appendToDisplay(')')">)</button>
+      <button class="btn operator" onclick="appendToDisplay('/')">÷</button>
+
+      <button class="btn" onclick="appendToDisplay('7')">7</button>
+      <button class="btn" onclick="appendToDisplay('8')">8</button>
+      <button class="btn" onclick="appendToDisplay('9')">9</button>
+      <button class="btn operator" onclick="appendToDisplay('*')">×</button>
+
+      <button class="btn" onclick="appendToDisplay('4')">4</button>
+      <button class="btn" onclick="appendToDisplay('5')">5</button>
+      <button class="btn" onclick="appendToDisplay('6')">6</button>
+      <button class="btn operator" onclick="appendToDisplay('-')">−</button>
+
+      <button class="btn" onclick="appendToDisplay('1')">1</button>
+      <button class="btn" onclick="appendToDisplay('2')">2</button>
+      <button class="btn" onclick="appendToDisplay('3')">3</button>
+      <button class="btn operator" onclick="appendToDisplay('+')">+</button>
+
+      <button class="btn" onclick="appendToDisplay('0')">0</button>
+      <button class="btn" onclick="appendToDisplay('.')">.</button>
+      <button class="btn equal" onclick="calculate()">=</button>
     </div>
+  </div>
+
+  <script>
+    const display = document.getElementById("display");
+
+    function appendToDisplay(value) {
+      if (display.innerText === "0" && value !== ".") {
+        display.innerText = value;
+      } else {
+        display.innerText += value;
+      }
+    }
+
+    function clearDisplay() {
+      display.innerText = "0";
+    }
+
+    function calculate() {
+      try {
+        display.innerText = eval(display.innerText.replace(/÷/g, "/").replace(/×/g, "*"));
+      } catch (e) {
+        display.innerText = "Error";
+      }
+    }
+  </script>
 </body>
 </html>
+
