@@ -9,27 +9,23 @@ class Calculator {
         this.currentOperand = '0';
         this.previousOperand = '';
         this.operation = undefined;
-        this.updateDisplay();
     }
 
     delete() {
         if (this.currentOperand === '0') return;
-        if (this.currentOperand.length === 1) {
+        this.currentOperand = this.currentOperand.toString().slice(0, -1);
+        if (this.currentOperand === '') {
             this.currentOperand = '0';
-        } else {
-            this.currentOperand = this.currentOperand.toString().slice(0, -1);
         }
-        this.updateDisplay();
     }
 
     appendNumber(number) {
         if (number === '.' && this.currentOperand.includes('.')) return;
         if (this.currentOperand === '0' && number !== '.') {
-            this.currentOperand = number;
+            this.currentOperand = number.toString();
         } else {
             this.currentOperand = this.currentOperand.toString() + number.toString();
         }
-        this.updateDisplay();
     }
 
     chooseOperation(operation) {
@@ -40,7 +36,6 @@ class Calculator {
         this.operation = operation;
         this.previousOperand = this.currentOperand;
         this.currentOperand = '';
-        this.updateDisplay();
     }
 
     compute() {
@@ -67,7 +62,6 @@ class Calculator {
         this.currentOperand = computation;
         this.operation = undefined;
         this.previousOperand = '';
-        this.updateDisplay();
     }
 
     getDisplayNumber(number) {
@@ -90,44 +84,48 @@ class Calculator {
     updateDisplay() {
         this.currentOperandTextElement.innerText = this.getDisplayNumber(this.currentOperand);
         if (this.operation != null) {
-            this.previousOperandTextElement.innerText =
-                `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`;
+            this.previousOperandTextElement.innerText = `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`;
         } else {
             this.previousOperandTextElement.innerText = '';
         }
     }
 }
 
-const numberButtons = document.querySelectorAll('button:not(.span-two):not([data-operation])');
-const operationButtons = document.querySelectorAll('[data-operation]');
-const equalsButton = document.querySelector('.span-two[data-equals]');
+const numberButtons = document.querySelectorAll('[data-number]');
+const operationButtons = document.querySelectorAll('[data-operator]');
+const equalsButton = document.querySelector('[data-equals]');
 const deleteButton = document.querySelector('[data-delete]');
-const allClearButton = document.querySelector('.span-two:not([data-equals])');
-const previousOperandTextElement = document.querySelector('.previous-operand');
-const currentOperandTextElement = document.querySelector('.current-operand');
+const allClearButton = document.querySelector('[data-all-clear]');
+const previousOperandTextElement = document.querySelector('[data-previous-operand]');
+const currentOperandTextElement = document.querySelector('[data-current-operand]');
 
 const calculator = new Calculator(previousOperandTextElement, currentOperandTextElement);
 
 numberButtons.forEach(button => {
     button.addEventListener('click', () => {
-        if (button.innerText === '.' && calculator.currentOperand.includes('.')) return;
         calculator.appendNumber(button.innerText);
+        calculator.updateDisplay();
     });
 });
 
-document.querySelectorAll('button').forEach(button => {
+operationButtons.forEach(button => {
     button.addEventListener('click', () => {
-        const { innerText } = button;
-        if (!isNaN(parseInt(innerText)) || innerText === '.') {
-            calculator.appendNumber(innerText);
-        } else if (innerText === 'AC') {
-            calculator.clear();
-        } else if (innerText === 'DEL') {
-            calculator.delete();
-        } else if (innerText === '=') {
-            calculator.compute();
-        } else {
-            calculator.chooseOperation(innerText);
-        }
+        calculator.chooseOperation(button.innerText);
+        calculator.updateDisplay();
     });
+});
+
+equalsButton.addEventListener('click', button => {
+    calculator.compute();
+    calculator.updateDisplay();
+});
+
+allClearButton.addEventListener('click', button => {
+    calculator.clear();
+    calculator.updateDisplay();
+});
+
+deleteButton.addEventListener('click', button => {
+    calculator.delete();
+    calculator.updateDisplay();
 });
